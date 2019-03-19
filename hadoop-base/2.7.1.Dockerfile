@@ -9,8 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV MULTIHOMED_NETWORK=1
 ENV PATH $HADOOP_PREFIX/bin/:$PATH
 
-RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends net-tools curl libsnappy-dev && \
     apt-get clean
 
