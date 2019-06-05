@@ -27,7 +27,9 @@ build-spark-2.4.3:
 		docker build -t honomoa/spark-base:2.4.3-hadoop3.1.2 -f ./spark-base/2.4.3-hadoop3.1.2.Dockerfile ./spark-base
 
 build-hive-3.1.1:
-		docker build -t honomoa/hive:3.1.1-spark2.4.3 -f ./hive/3.1.1-spark2.4.3.Dockerfile ./hive
+		docker build -t honomoa/hive-base:3.1.1-spark2.4.3 -f ./hive-base/3.1.1-spark2.4.3.Dockerfile ./hive-base
+		docker build -t honomoa/hive-server:3.1.1-spark2.4.3 -f ./hive-server/3.1.1-spark2.4.3.Dockerfile ./hive-server
+		docker build -t honomoa/hive-metastore:3.1.1-spark2.4.3 -f ./hive-metastore/3.1.1-spark2.4.3.Dockerfile ./hive-metastore
 		docker build -t honomoa/hive-metastore-postgresql:3.1.0 -f ./hive-metastore-postgresql/3.1.0.Dockerfile ./hive-metastore-postgresql
 
 build-hue-latest:
@@ -74,7 +76,9 @@ clean-spark-2.4.3:
 		docker rmi honomoa/hadoop-base:2.4.3-hadoop3.1.2 || true
 
 clean-hive-3.1.1:
-		docker rmi honomoa/hive:3.1.1-spark2.4.3 || true
+		docker rmi honomoa/hive-metastore:3.1.1-spark2.4.3 || true
+		docker rmi honomoa/hive-server:3.1.1-spark2.4.3 || true
+		docker rmi honomoa/hive-base:3.1.1-spark2.4.3 || true
 		docker rmi honomoa/hive-metastore-postgresql:3.1.0 || true
 
 clean-hue-latest:
@@ -120,7 +124,9 @@ push-spark-2.4.3:
 		docker push honomoa/spark-base:2.4.3-hadoop3.1.2
 
 push-hive-3.1.1:
-		docker push honomoa/hive:3.1.1-spark2.4.3
+		docker push honomoa/hive-base:3.1.1-spark2.4.3
+		docker push honomoa/hive-server:3.1.1-spark2.4.3
+		docker push honomoa/hive-metastore:3.1.1-spark2.4.3
 		docker push honomoa/hive-metastore-postgresql:3.1.0
 
 push-hue-latest:
