@@ -39,7 +39,7 @@ ENV PYTHONHASHSEED 1
 COPY hive-site.xml $SPARK_CONF_DIR
 COPY spark-env.sh $SPARK_CONF_DIR
 
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod a+x /usr/local/bin/entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod a+x /entrypoint.sh
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
