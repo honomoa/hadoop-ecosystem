@@ -1,7 +1,5 @@
 FROM openjdk:8
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
 ENV HADOOP_VERSION 3.1.2
 ENV HADOOP_CONF_DIR=/etc/hadoop
 ENV HADOOP_HOME=/opt/hadoop

@@ -2,8 +2,6 @@ FROM openjdk:8
 
 HEALTHCHECK CMD echo stat | nc localhost 2181 || exit 1
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
 ENV ZOOKEEPER_USER=zookeeper
 ENV ZOOKEEPER_VERSION=3.4.14
 ENV ZOOKEEPER_CONF_DIR=/etc/zookeeper
