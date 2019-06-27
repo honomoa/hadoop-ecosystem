@@ -1,4 +1,24 @@
-FROM honomoa/hbase-base:2.1.4-hadoop3.1.2
+FROM honomoa/hive-base:3.1.1-spark2.4.3
+
+ENV HBASE_VERSION=2.1.5
+ENV HBASE_CONF_DIR=/etc/hbase
+ENV HBASE_HOME /opt/hbase
+ENV HBASE_URL https://archive.apache.org/dist/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz
+ENV HBASE_CLASSPATH $HBASE_HOME/lib/*
+ENV PATH $HBASE_HOME/bin:$PATH
+
+RUN curl -fSL https://archive.apache.org/dist/hbase/KEYS | gpg --import -
+
+RUN set -x \
+    && curl -fSL "$HBASE_URL" -o /tmp/hbase.tar.gz \
+    && curl -fSL "$HBASE_URL.asc" -o /tmp/hbase.tar.gz.asc \
+    && gpg --verify /tmp/hbase.tar.gz.asc \
+    && tar -xvf /tmp/hbase.tar.gz -C /opt/ \
+    && rm /tmp/hbase.tar.gz*
+
+RUN ln -s /opt/hbase-$HBASE_VERSION/conf $HBASE_CONF_DIR && \
+    ln -s /opt/hbase-$HBASE_VERSION $HBASE_HOME
+RUN curl -fSL http://central.maven.org/maven2/org/apache/htrace/htrace-core/3.1.0-incubating/htrace-core-3.1.0-incubating.jar -o $HBASE_HOME/lib/htrace-core-3.1.0-incubating.jar
 
 ENV KYLIN_VERSION=2.6.2
 ENV KYLIN_CONF_DIR=/etc/kylin
@@ -18,39 +38,8 @@ RUN set -x \
 RUN ln -s /opt/apache-kylin-$KYLIN_VERSION-bin-hadoop3/conf $KYLIN_CONF_DIR && \
     ln -s /opt/apache-kylin-$KYLIN_VERSION-bin-hadoop3 $KYLIN_HOME
 
-ENV HIVE_VERSION 3.1.1
-ENV HIVE_CONF_DIR /etc/hive
-ENV HIVE_HOME /opt/hive
-ENV HIVE_URL https://archive.apache.org/dist/hive/hive-$HIVE_VERSION/apache-hive-$HIVE_VERSION-bin.tar.gz
-ENV PATH $HIVE_HOME/bin:$PATH
+RUN ln -s /opt/spark-$SPARK_VERSION/jars /opt/spark-$SPARK_VERSION/jars/lib
 
-RUN curl -fSL $HIVE_URL -o /tmp/hive.tar.gz && \
-	tar -xvf /tmp/hive.tar.gz -C /opt/ && \
-	mv /opt/apache-hive-$HIVE_VERSION-bin /opt/hive-$HIVE_VERSION && \
-	ls -al && \
-	rm /tmp/hive.tar.gz
-
-RUN ln -s /opt/hive-$HIVE_VERSION/conf $HIVE_CONF_DIR && \
-    ln -s /opt/hive-$HIVE_VERSION $HIVE_HOME
-
-ENV SPARK_VERSION=2.4.3
-ENV SPARK_CONF_DIR=/etc/spark
-ENV SPARK_HOME /opt/spark
-ENV SPARK_URL https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
-ENV PATH $SPARK_HOME/bin:$PATH
-
-RUN curl -fSL $SPARK_URL -o /tmp/spark.tgz \
-      && tar -xvf /tmp/spark.tgz -C /opt/ \
-      && mv /opt/spark-$SPARK_VERSION-bin-without-hadoop /opt/spark-$SPARK_VERSION \
-      && ls -al \
-      && rm /tmp/spark.tgz \
-      && cd /
-
-RUN ln -s /opt/spark-$SPARK_VERSION/conf $SPARK_CONF_DIR && \
-    ln -s /opt/spark-$SPARK_VERSION $SPARK_HOME && \
-    ln -s /opt/spark-$SPARK_VERSION/jars /opt/spark-$SPARK_VERSION/jars/lib
-
-ADD conf/hive-site.xml $HIVE_CONF_DIR
 ADD conf/tomcat_server.xml $KYLIN_HOME/tomcat/conf/server.xml
 RUN rm $KYLIN_HOME/tomcat/conf/server.xml.init
 

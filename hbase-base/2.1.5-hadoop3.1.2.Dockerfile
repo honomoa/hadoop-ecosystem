@@ -1,6 +1,6 @@
 FROM honomoa/hadoop-base:3.1.2
 
-ENV HBASE_VERSION=2.1.4
+ENV HBASE_VERSION=2.1.5
 ENV HBASE_CONF_DIR=/etc/hbase
 ENV HBASE_HOME /opt/hbase
 ENV HBASE_URL https://archive.apache.org/dist/hbase/$HBASE_VERSION/hbase-$HBASE_VERSION-bin.tar.gz

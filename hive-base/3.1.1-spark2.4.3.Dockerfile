@@ -21,7 +21,7 @@ RUN ln -s /opt/hive-$HIVE_VERSION/conf $HIVE_CONF_DIR && \
     ln -s /opt/hive-$HIVE_VERSION $HIVE_HOME
 RUN ln -s $SPARK_HOME/jars/jackson-module-paranamer-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/jackson-module-scala_2.11-*.jar $HIVE_HOME/lib && \
-		ln -s $SPARK_HOME/jars/jersey-container-servlet-core-2.28.jar $HIVE_HOME/lib && \
+		ln -s $SPARK_HOME/jars/jersey-container-servlet-core-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/json4s-ast_2.11-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/json4s-core_2.11-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/json4s-jackson_2.11-*.jar $HIVE_HOME/lib && \
@@ -34,7 +34,7 @@ RUN ln -s $SPARK_HOME/jars/jackson-module-paranamer-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/spark-network-common_2.11-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/spark-network-shuffle_2.11-*.jar $HIVE_HOME/lib && \
 		ln -s $SPARK_HOME/jars/spark-unsafe_2.11-*.jar $HIVE_HOME/lib && \
-		ln -s $SPARK_HOME/jars/xbean-asm5-shaded-*.jar $HIVE_HOME/lib
+		ln -s $SPARK_HOME/jars/xbean-asm6-shaded-*.jar $HIVE_HOME/lib
 
 #Spark should be compiled with Hive to be able to use it
 #hive-site.xml should be copied to $SPARK_HOME/conf folder
