@@ -8,7 +8,7 @@ DOCKER:=docker
 
 .PHONY: build
 
-build: build-hadoop build-spark build-hive build-hue build-livy build-zookeeper build-hbase build-kylin
+build: build-hadoop build-spark build-hive build-hue build-livy build-zookeeper build-hbase build-kylin build-zeppelin
 
 build-hadoop: build-hadoop-3.1.2
 build-spark: build-spark-2.4.3
@@ -19,6 +19,7 @@ build-zookeeper: build-zookeeper-3.4.14 build-zookeeper-3.5.5
 build-hbase: build-hbase-2.1.5
 build-kylin: build-kylin-2.6.2
 build-oozie: build-oozie-4.3.1 build-oozie-5.1.0
+build-zeppelin: build-zeppelin-0.8.2
 
 build-hadoop-%:
 		$(DOCKER) build -t honomoa/hadoop-base:$* -f ./hadoop-base/$*.Dockerfile ./hadoop-base
@@ -63,8 +64,11 @@ build-kylin-%:
 build-oozie-%:
 		$(DOCKER) build -t honomoa/oozie:$*-hadoop$(OOZIE_HADOOP) -f ./oozie/$*-hadoop$(OOZIE_HADOOP).Dockerfile ./oozie
 
+build-zeppelin-%:
+		$(DOCKER) build -t honomoa/zeppelin:$* -f ./zeppelin/$*.Dockerfile ./zeppelin
+
 .PHONY: clean
-clean: clean-hive clean-spark clean-livy clean-zookeeper clean-hbase clean-kylin clean-hadoop clean-hue 
+clean: clean-hive clean-zeppelin clean-spark clean-livy clean-zookeeper clean-hbase clean-kylin clean-hadoop clean-hue
 
 clean-hadoop: clean-hadoop-3.1.2
 clean-spark: clean-spark-2.4.3
@@ -75,6 +79,7 @@ clean-zookeeper: clean-zookeeper-3.4.14 clean-zookeeper-3.5.5
 clean-hbase: clean-hbase-2.1.5
 clean-kylin: clean-kylin-2.6.2
 clean-oozie: clean-oozie-5.1.0
+clean-zeppelin: clean-zeppelin-0.8.2
 
 clean-hadoop-%:
 		$(DOCKER) rmi honomoa/hadoop-namenode:$* || true
@@ -119,8 +124,11 @@ clean-kylin-%:
 clean-oozie-%:
 		$(DOCKER) rmi honomoa/oozie:$*-hadoop$(OOZIE_HADOOP) || true
 
+clean-zeppelin-%:
+		$(DOCKER) rmi honomoa/zeppelin:$* || true
+
 .PHONY: push
-push: push-hadoop push-spark push-hive push-hue push-livy push-zookeeper push-hbase push-kylin
+push: push-hadoop push-spark push-hive push-hue push-livy push-zookeeper push-hbase push-kylin push-zeppelin
 
 push-hadoop: push-hadoop-3.1.2
 push-spark: push-spark-2.4.3
@@ -131,6 +139,7 @@ push-zookeeper: push-zookeeper-3.4.14 push-zookeeper-3.5.5
 push-hbase: push-hbase-2.1.5
 push-kylin: push-kylin-2.6.2
 push-oozie: push-oozie-4.3.1 push-oozie-5.1.0
+push-zeppelin: push-zeppelin-0.8.2
 
 push-hadoop-%:
 		$(DOCKER) push honomoa/hadoop-base:$*
@@ -174,7 +183,10 @@ push-kylin-%:
 push-oozie-%:
 		$(DOCKER) push honomoa/oozie:$*-hadoop$(OOZIE_HADOOP)
 
-pull: pull-hadoop pull-spark pull-hive pull-hue pull-livy pull-zookeeper pull-hbase pull-kylin
+push-zeppelin-%:
+		$(DOCKER) push honomoa/zeppelin:$*
+
+pull: pull-hadoop pull-spark pull-hive pull-hue pull-livy pull-zookeeper pull-hbase pull-kylin pull-zeppelin
 
 pull-hadoop: pull-hadoop-3.1.2
 pull-spark: pull-spark-2.4.3
@@ -185,6 +197,7 @@ pull-zookeeper: pull-zookeeper-3.4.14 pull-zookeeper-3.5.5
 pull-hbase: pull-hbase-2.1.5
 pull-kylin: pull-kylin-2.6.2
 pull-oozie: pull-oozie-4.3.1 pull-oozie-5.1.0
+pull-zeppelin: pull-zeppelin-0.8.2
 
 pull-hadoop-%:
 		$(DOCKER) pull honomoa/hadoop-base:$*
@@ -227,3 +240,6 @@ pull-kylin-%:
 
 pull-oozie-%:
 		$(DOCKER) pull honomoa/oozie:$*-hadoop$(OOZIE_HADOOP)
+
+pull-zeppelin-%:
+		$(DOCKER) pull honomoa/zeppelin:$*
