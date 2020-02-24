@@ -38,7 +38,7 @@ configure $HADOOP_CONF_DIR/yarn-site.xml yarn YARN_CONF
 configure $HADOOP_CONF_DIR/httpfs-site.xml httpfs HTTPFS_CONF
 configure $HADOOP_CONF_DIR/kms-site.xml kms KMS_CONF
 configure $HADOOP_CONF_DIR/mapred-site.xml mapred MAPRED_CONF
-configure $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin ZEPPELIN_CONF
+configure $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin ZEPPELIN_SITE_CONF
 
 if [ "$MULTIHOMED_NETWORK" = "1" ]; then
     echo "Configuring for multihomed network"

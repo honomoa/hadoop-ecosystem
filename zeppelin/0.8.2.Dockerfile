@@ -5,7 +5,6 @@ HEALTHCHECK CMD echo stat | nc localhost 8080 || exit 1
 ENV ZEPPELIN_USER=zeppelin
 ENV ZEPPELIN_VERSION=0.8.2
 ENV ZEPPELIN_CONF_DIR=/etc/zeppelin
-ENV ZOOCFGDIR=/etc/zeppelin
 ENV ZEPPELIN_HOME=/opt/zeppelin
 ENV ZEPPELIN_URL=https://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
 ENV PATH=$ZEPPELIN_HOME/bin:$PATH
@@ -21,10 +20,13 @@ RUN set -x \
     && curl -fSL "$ZEPPELIN_URL.asc" -o /tmp/zeppelin.tar.gz.asc \
     && gpg --verify /tmp/zeppelin.tar.gz.asc \
     && tar -xvf /tmp/zeppelin.tar.gz -C /opt/ \
+    && mv /opt/zeppelin-${ZEPPELIN_VERSION}-bin-all /opt/zeppelin-${ZEPPELIN_VERSION} \
     && rm /tmp/zeppelin.tar.gz*
 
 RUN ln -s /opt/zeppelin-$ZEPPELIN_VERSION/conf $ZEPPELIN_CONF_DIR && \
     ln -s /opt/zeppelin-$ZEPPELIN_VERSION $ZEPPELIN_HOME
+
+COPY zeppelin-site.xml $ZEPPELIN_CONF_DIR
 
 RUN mkdir -p $ZEPPELIN_HOME/data && \
     mkdir -p $ZEPPELIN_HOME/logs
