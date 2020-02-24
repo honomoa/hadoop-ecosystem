@@ -32,6 +32,23 @@ function configure() {
     done
 }
 
+function install_r_package() {
+    local module=$1
+    local envPrefix=$2
+    echo "Configuring $module"
+    for c in `printenv | perl -sne 'print "$1 " if m/^${envPrefix}_(.+?)=.*/' -- -envPrefix=$envPrefix`; do 
+        name=`echo ${c} | perl -pe 's/___/-/g; s/__/@/g; s/_/./g; s/@/_/g;'`
+        var="${envPrefix}_${c}"
+        cran=${!var}
+        if [[ -d /usr/local/lib/R/site-library/$name ]]; then
+            echo " - Skip R $name"
+        else
+            echo " - Install R $name from $cran"
+            R -e "install.packages('$name', repos='$cran')" >> $ZEPPELIN_HOME/logs/install_r_package.log
+        fi
+    done
+}
+
 configure $HADOOP_CONF_DIR/core-site.xml core CORE_CONF
 configure $HADOOP_CONF_DIR/hdfs-site.xml hdfs HDFS_CONF
 configure $HADOOP_CONF_DIR/yarn-site.xml yarn YARN_CONF
@@ -39,6 +56,8 @@ configure $HADOOP_CONF_DIR/httpfs-site.xml httpfs HTTPFS_CONF
 configure $HADOOP_CONF_DIR/kms-site.xml kms KMS_CONF
 configure $HADOOP_CONF_DIR/mapred-site.xml mapred MAPRED_CONF
 configure $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin ZEPPELIN_SITE_CONF
+
+install_r_package cran R_PACKAGE
 
 if [ "$MULTIHOMED_NETWORK" = "1" ]; then
     echo "Configuring for multihomed network"
@@ -62,6 +81,7 @@ if [ "$MULTIHOMED_NETWORK" = "1" ]; then
 
     # ZEPPELIN
     addProperty $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin.server.addr 0.0.0.0
+    addProperty $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin.server.port 8080
 fi
 
 if [ -n "$GANGLIA_HOST" ]; then

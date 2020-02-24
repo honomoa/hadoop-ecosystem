@@ -32,12 +32,17 @@ RUN mkdir -p $ZEPPELIN_HOME/data && \
     mkdir -p $ZEPPELIN_HOME/logs
 VOLUME $ZEPPELIN_HOME/data $ZEPPELIN_HOME/logs
 
-EXPOSE 8080
-
-ENV USER=root
+# Install R
+RUN echo "deb http://cran.mtu.edu/bin/linux/debian stretch-cran35/" | tee -a /etc/apt/sources.list && \
+    apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF' && \
+    apt update && \
+    apt install -y --allow-unauthenticated r-base r-base-dev && \
+    apt clean
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
+
+EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
 WORKDIR $ZEPPELIN_HOME
