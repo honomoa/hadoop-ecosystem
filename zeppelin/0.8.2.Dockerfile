@@ -30,7 +30,7 @@ COPY zeppelin-site.xml $ZEPPELIN_CONF_DIR
 
 RUN mkdir -p $ZEPPELIN_HOME/data && \
     mkdir -p $ZEPPELIN_HOME/logs
-VOLUME $ZEPPELIN_HOME/data $ZEPPELIN_HOME/logs
+VOLUME $ZEPPELIN_HOME/data $ZEPPELIN_HOME/logs $ZEPPELIN_HOME/notebook $ZEPPELIN_HOME/interpreter
 
 # Install R
 RUN echo "deb http://cran.mtu.edu/bin/linux/debian stretch-cran35/" | tee -a /etc/apt/sources.list && \
@@ -38,6 +38,7 @@ RUN echo "deb http://cran.mtu.edu/bin/linux/debian stretch-cran35/" | tee -a /et
     apt update && \
     apt install -y --allow-unauthenticated r-base r-base-dev && \
     apt clean
+VOLUME /usr/local/lib/R/site-library /usr/local/lib/python3.5/dist-packages
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
