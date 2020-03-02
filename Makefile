@@ -203,6 +203,7 @@ pull-hadoop-%:
 		$(DOCKER) pull honomoa/hadoop-base:$*
 		$(DOCKER) pull honomoa/hadoop-namenode:$*
 		$(DOCKER) pull honomoa/hadoop-datanode:$*
+		$(DOCKER) pull honomoa/hadoop-datanodemanager:$*
 		$(DOCKER) pull honomoa/hadoop-journalnode:$*
 		$(DOCKER) pull honomoa/hadoop-secondarynamenode:$*
 		$(DOCKER) pull honomoa/hadoop-resourcemanager:$*
