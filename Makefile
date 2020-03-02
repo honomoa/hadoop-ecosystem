@@ -4,11 +4,12 @@ SPARK_HADOOP = 3.1.2
 HIVE_SPARK = 2.4.3
 HBASE_HADOOP = 3.1.2
 OOZIE_HADOOP = 2.7.7
+MINICONDA_SPARK = $(HIVE_SPARK)
 DOCKER:=docker
 
 .PHONY: build
 
-build: build-hadoop build-spark build-hive build-hue build-livy build-zookeeper build-hbase build-kylin build-zeppelin
+build: build-hadoop build-spark build-hive build-hue build-livy build-zookeeper build-hbase build-kylin build-zeppelin build-miniconda build-jupyter
 
 build-hadoop: build-hadoop-3.1.2
 build-spark: build-spark-2.4.3
@@ -20,6 +21,8 @@ build-hbase: build-hbase-2.1.5
 build-kylin: build-kylin-2.6.2
 build-oozie: build-oozie-4.3.1 build-oozie-5.1.0
 build-zeppelin: build-zeppelin-0.8.2
+build-miniconda: build-miniconda-4.7.12
+build-jupyter: build-jupyter-1.1.0
 
 build-hadoop-%:
 		$(DOCKER) build -t honomoa/hadoop-base:$* -f ./hadoop-base/$*.Dockerfile ./hadoop-base
@@ -67,8 +70,14 @@ build-oozie-%:
 build-zeppelin-%:
 		$(DOCKER) build -t honomoa/zeppelin:$* -f ./zeppelin/$*.Dockerfile ./zeppelin
 
+build-miniconda-%:
+		$(DOCKER) build -t honomoa/miniconda:$*-spark$(MINICONDA_SPARK) -f ./miniconda/$*-spark$(MINICONDA_SPARK).Dockerfile ./miniconda
+
+build-jupyter-%:
+		$(DOCKER) build -t honomoa/jupyter:$*-spark$(MINICONDA_SPARK) -f ./jupyter/$*-spark$(MINICONDA_SPARK).Dockerfile ./jupyter
+
 .PHONY: clean
-clean: clean-hive clean-zeppelin clean-spark clean-livy clean-zookeeper clean-hbase clean-kylin clean-hadoop clean-hue
+clean: clean-hive clean-zeppelin clean-spark clean-livy clean-zookeeper clean-hbase clean-kylin clean-hadoop clean-hue clean-miniconda clean-jupyter
 
 clean-hadoop: clean-hadoop-3.1.2
 clean-spark: clean-spark-2.4.3
@@ -80,6 +89,8 @@ clean-hbase: clean-hbase-2.1.5
 clean-kylin: clean-kylin-2.6.2
 clean-oozie: clean-oozie-5.1.0
 clean-zeppelin: clean-zeppelin-0.8.2
+clean-miniconda: clean-miniconda-4.7.12
+clean-jupyter: clean-jupyter-1.1.0
 
 clean-hadoop-%:
 		$(DOCKER) rmi honomoa/hadoop-namenode:$* || true
@@ -127,8 +138,14 @@ clean-oozie-%:
 clean-zeppelin-%:
 		$(DOCKER) rmi honomoa/zeppelin:$* || true
 
+clean-miniconda-%:
+		$(DOCKER) rmi honomoa/miniconda:$*-spark$(MINICONDA_SPARK) || true
+
+clean-jupyter-%:
+		$(DOCKER) rmi honomoa/jupyter:$*-spark$(MINICONDA_SPARK) || true
+
 .PHONY: push
-push: push-hadoop push-spark push-hive push-hue push-livy push-zookeeper push-hbase push-kylin push-zeppelin
+push: push-hadoop push-spark push-hive push-hue push-livy push-zookeeper push-hbase push-kylin push-zeppelin push-miniconda push-jupyter
 
 push-hadoop: push-hadoop-3.1.2
 push-spark: push-spark-2.4.3
@@ -140,6 +157,8 @@ push-hbase: push-hbase-2.1.5
 push-kylin: push-kylin-2.6.2
 push-oozie: push-oozie-4.3.1 push-oozie-5.1.0
 push-zeppelin: push-zeppelin-0.8.2
+push-miniconda: push-miniconda-4.7.12
+push-jupyter: push-jupyter-1.1.0
 
 push-hadoop-%:
 		$(DOCKER) push honomoa/hadoop-base:$*
@@ -186,7 +205,13 @@ push-oozie-%:
 push-zeppelin-%:
 		$(DOCKER) push honomoa/zeppelin:$*
 
-pull: pull-hadoop pull-spark pull-hive pull-hue pull-livy pull-zookeeper pull-hbase pull-kylin pull-zeppelin
+push-miniconda-%:
+		$(DOCKER) push honomoa/miniconda:$*-spark$(MINICONDA_SPARK)
+
+push-jupyter-%:
+		$(DOCKER) push honomoa/jupyter:$*-spark$(MINICONDA_SPARK)
+
+pull: pull-hadoop pull-spark pull-hive pull-hue pull-livy pull-zookeeper pull-hbase pull-kylin pull-zeppelin pull-miniconda pull-jupyter
 
 pull-hadoop: pull-hadoop-3.1.2
 pull-spark: pull-spark-2.4.3
@@ -198,6 +223,8 @@ pull-hbase: pull-hbase-2.1.5
 pull-kylin: pull-kylin-2.6.2
 pull-oozie: pull-oozie-4.3.1 pull-oozie-5.1.0
 pull-zeppelin: pull-zeppelin-0.8.2
+pull-miniconda: pull-miniconda-4.7.12
+pull-jupyter: pull-jupyter-1.1.0
 
 pull-hadoop-%:
 		$(DOCKER) pull honomoa/hadoop-base:$*
@@ -244,3 +271,9 @@ pull-oozie-%:
 
 pull-zeppelin-%:
 		$(DOCKER) pull honomoa/zeppelin:$*
+
+pull-miniconda-%:
+		$(DOCKER) pull honomoa/miniconda:$*-spark$(MINICONDA_SPARK)
+
+pull-jupyter-%:
+		$(DOCKER) pull honomoa/jupyter:$*-spark$(MINICONDA_SPARK)
