@@ -33,12 +33,12 @@ RUN mkdir -p $ZEPPELIN_HOME/data && \
 VOLUME $ZEPPELIN_HOME/data $ZEPPELIN_HOME/logs $ZEPPELIN_HOME/notebook $ZEPPELIN_HOME/interpreter
 
 # Install R
-RUN echo "deb http://cran.mtu.edu/bin/linux/debian stretch-cran35/" | tee -a /etc/apt/sources.list && \
+RUN echo "deb http://cran.mtu.edu/bin/linux/debian buster-cran35/" | tee -a /etc/apt/sources.list && \
     apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF' && \
     apt update && \
-    apt install -y --allow-unauthenticated r-base r-base-dev && \
+    apt install -y --allow-unauthenticated r-base r-base-dev r-base-core r-recommended && \
     apt clean
-VOLUME /usr/local/lib/R/site-library /usr/local/lib/python3.5/dist-packages
+VOLUME /usr/local/lib/R/site-library /usr/local/lib/python3.7/dist-packages
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh

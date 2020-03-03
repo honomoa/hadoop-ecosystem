@@ -20,6 +20,14 @@ RUN curl -fSL $LIVY_URL -o /tmp/livy.zip \
 RUN ln -s /opt/livy-$LIVY_VERSION/conf $LIVY_CONF_DIR && \
     ln -s /opt/livy-$LIVY_VERSION $LIVY_HOME
 
+# Install R
+RUN echo "deb http://cran.mtu.edu/bin/linux/debian buster-cran35/" | tee -a /etc/apt/sources.list && \
+    apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF' && \
+    apt update && \
+    apt install -y --allow-unauthenticated r-base r-base-dev && \
+    apt clean
+# Install PySpark
+
 VOLUME $LIVY_CONF_DIR/livy.conf
 VOLUME $LIVY_CONF_DIR/livy-client.conf
 
