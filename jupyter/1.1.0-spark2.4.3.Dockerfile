@@ -52,6 +52,10 @@ RUN conda install --quiet --yes \
     conda clean --all -f -y && \
     jupyter notebook --generate-config
 
+RUN conda install --quiet --yes tensorflow && \
+    conda clean --all -f -y && \
+    jupyter notebook --generate-config -y
+
 # Apache Toree kernel
 RUN pip install --no-cache-dir \
     https://dist.apache.org/repos/dist/release/incubator/toree/${TOREE_VERSION}-incubating/toree-pip/toree-${TOREE_VERSION}.tar.gz \
