@@ -24,6 +24,8 @@ RUN ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop $HADOOP_CONF_DIR && \
     ln -s /opt/hadoop-$HADOOP_VERSION/share/hadoop/tools/lib/aws-java-sdk-*.jar $HADOOP_HOME/share/hadoop/common/lib/ && \
     ln -s /opt/hadoop-$HADOOP_VERSION/share/hadoop/tools/lib/hadoop-aws-*.jar $HADOOP_HOME/share/hadoop/common/lib/
 
+ADD jars/spark-2.4.3-yarn-shuffle.jar $HADOOP_HOME/share/hadoop/yarn/lib
+
 RUN mkdir -p $HADOOP_HOME/logs
 VOLUME $HADOOP_HOME/logs
 
