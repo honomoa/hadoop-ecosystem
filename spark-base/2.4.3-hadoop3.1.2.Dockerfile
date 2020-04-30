@@ -26,7 +26,8 @@ RUN curl -fSL $SPARK_URL -o /tmp/spark.tgz \
       && cd /
 
 RUN ln -s /opt/spark-$SPARK_VERSION/conf $SPARK_CONF_DIR && \
-    ln -s /opt/spark-$SPARK_VERSION $SPARK_HOME
+    ln -s /opt/spark-$SPARK_VERSION $SPARK_HOME && \
+    cp /opt/spark-$SPARK_VERSION/conf/spark-defaults.conf.template /opt/spark-$SPARK_VERSION/conf/spark-defaults.conf
 
 RUN apt-get update && apt-get install -y python3 python3-setuptools python3-pip && \
     apt-get clean && \

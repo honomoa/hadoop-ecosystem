@@ -7,30 +7,31 @@ function addProperty() {
   local name=$2
   local value=$3
 
-  local entry="$name=${value}"
-  echo ${entry} >> $path
+  local entry="s|^$name.*|$name = $value|"
+  local commented_entry="s|^#$name.*|$name = $value|"
+  grep -q "^$name" $path && sed -i -e "$entry" $path || grep -q "^#$name" $path && sed -i -e "$commented_entry" $path || echo "$name=$value" >> $path
 }
 
 function configure() {
     local path=$1
     local module=$2
     local envPrefix=$3
+    local func=${4:-addConfiguration}
 
     local var
     local value
-    
+
     echo "Configuring $module"
-    echo -n "" > $path
-    for c in `printenv | perl -sne 'print "$1 " if m/^${envPrefix}_(.+?)=.*/' -- -envPrefix=$envPrefix`; do 
+    for c in `printenv | perl -sne 'print "$1 " if m/^${envPrefix}_(.+?)=.*/' -- -envPrefix=$envPrefix`; do
         name=`echo ${c} | perl -pe 's/___/-/g; s/__/@/g; s/_/./g; s/@/_/g;'`
         var="${envPrefix}_${c}"
         value=${!var}
         echo " - Setting $name=$value"
-        addProperty $path $name "$value"
+        $func $path $name "$value"
     done
 }
 
-configure $ZOOKEEPER_CONF_DIR/zoo.cfg zoo.cfg ZK
+configure $ZOOKEEPER_CONF_DIR/zoo.cfg zoo.cfg ZK addProperty
 
 addProperty $ZOOKEEPER_CONF_DIR/zoo.cfg clientPort 2181
 addProperty $ZOOKEEPER_CONF_DIR/zoo.cfg dataDir $ZOOKEEPER_HOME/data

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function addProperty() {
+function addConfiguration() {
   local path=$1
   local name=$2
   local value=$3
@@ -10,10 +10,21 @@ function addProperty() {
   sed -i "/<\/configuration>/ s/.*/${escapedEntry}\n&/" $path
 }
 
+function addProperty() {
+  local path=$1
+  local name=$2
+  local value=$3
+
+  local entry="s|^$name.*|$name = $value|"
+  local commented_entry="s|^#$name.*|$name = $value|"
+  grep -q "^$name" $path && sed -i -e "$entry" $path || grep -q "^#$name" $path && sed -i -e "$commented_entry" $path || echo "$name=$value" >> $path
+}
+
 function configure() {
     local path=$1
     local module=$2
     local envPrefix=$3
+    local func=${4:-addConfiguration}
 
     local var
     local value
@@ -24,7 +35,7 @@ function configure() {
         var="${envPrefix}_${c}"
         value=${!var}
         echo " - Setting $name=$value"
-        addProperty $path $name "$value"
+        $func $path $name "$value"
     done
 }
 

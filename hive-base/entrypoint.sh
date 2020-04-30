@@ -4,7 +4,7 @@
 export HOSTNAME=${HOSTNAME:-`hostname -f`}
 export CORE_CONF_fs_defaultFS=${CORE_CONF_fs_defaultFS:-hdfs://$HOSTNAME:8020}
 
-function addProperty() {
+function addConfiguration() {
   local path=$1
   local name=$2
   local value=$3
@@ -14,21 +14,32 @@ function addProperty() {
   sed -i "/<\/configuration>/ s/.*/${escapedEntry}\n&/" $path
 }
 
+function addProperty() {
+  local path=$1
+  local name=$2
+  local value=$3
+
+  local entry="s|^$name.*|$name = $value|"
+  local commented_entry="s|^#$name.*|$name = $value|"
+  grep -q "^$name" $path && sed -i -e "$entry" $path || grep -q "^#$name" $path && sed -i -e "$commented_entry" $path || echo "$name=$value" >> $path
+}
+
 function configure() {
     local path=$1
     local module=$2
     local envPrefix=$3
+    local func=${4:-addConfiguration}
 
     local var
     local value
-    
+
     echo "Configuring $module"
-    for c in `printenv | perl -sne 'print "$1 " if m/^${envPrefix}_(.+?)=.*/' -- -envPrefix=$envPrefix`; do 
+    for c in `printenv | perl -sne 'print "$1 " if m/^${envPrefix}_(.+?)=.*/' -- -envPrefix=$envPrefix`; do
         name=`echo ${c} | perl -pe 's/___/-/g; s/__/@/g; s/_/./g; s/@/_/g;'`
         var="${envPrefix}_${c}"
         value=${!var}
         echo " - Setting $name=$value"
-        addProperty $path $name "$value"
+        $func $path $name "$value"
     done
 }
 
@@ -39,26 +50,27 @@ configure $HADOOP_CONF_DIR/httpfs-site.xml httpfs HTTPFS_CONF
 configure $HADOOP_CONF_DIR/kms-site.xml kms KMS_CONF
 configure $HADOOP_CONF_DIR/mapred-site.xml mapred MAPRED_CONF
 configure $HIVE_CONF_DIR/hive-site.xml hive HIVE_SITE_CONF
+configure $SPARK_CONF_DIR/spark-defaults.conf spark SPARK_CONF addProperty
 
 if [ "$MULTIHOMED_NETWORK" = "1" ]; then
     echo "Configuring for multihomed network"
 
     # HDFS
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.rpc-bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.servicerpc-bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.http-bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.https-bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.client.use.datanode.hostname true
-    addProperty $HADOOP_CONF_DIR/hdfs-site.xml dfs.datanode.use.datanode.hostname true
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.rpc-bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.servicerpc-bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.http-bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.namenode.https-bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.client.use.datanode.hostname true
+    addConfiguration $HADOOP_CONF_DIR/hdfs-site.xml dfs.datanode.use.datanode.hostname true
 
     # YARN
-    addProperty $HADOOP_CONF_DIR/yarn-site.xml yarn.resourcemanager.bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/yarn-site.xml yarn.nodemanager.bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/yarn-site.xml yarn.nodemanager.bind-host 0.0.0.0
-    addProperty $HADOOP_CONF_DIR/yarn-site.xml yarn.timeline-service.bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/yarn-site.xml yarn.resourcemanager.bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/yarn-site.xml yarn.nodemanager.bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/yarn-site.xml yarn.nodemanager.bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/yarn-site.xml yarn.timeline-service.bind-host 0.0.0.0
 
     # MAPRED
-    addProperty $HADOOP_CONF_DIR/mapred-site.xml yarn.nodemanager.bind-host 0.0.0.0
+    addConfiguration $HADOOP_CONF_DIR/mapred-site.xml yarn.nodemanager.bind-host 0.0.0.0
 fi
 
 if [ -n "$GANGLIA_HOST" ]; then
