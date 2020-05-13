@@ -18,7 +18,7 @@ RUN set -x \
 
 RUN ln -s /opt/hbase-$HBASE_VERSION/conf $HBASE_CONF_DIR && \
     ln -s /opt/hbase-$HBASE_VERSION $HBASE_HOME
-RUN curl -fSL http://central.maven.org/maven2/org/apache/htrace/htrace-core/3.1.0-incubating/htrace-core-3.1.0-incubating.jar -o $HBASE_HOME/lib/htrace-core-3.1.0-incubating.jar
+RUN curl -fSL https://repo1.maven.org/maven2/org/apache/htrace/htrace-core/3.1.0-incubating/htrace-core-3.1.0-incubating.jar -o $HBASE_HOME/lib/htrace-core-3.1.0-incubating.jar
 
 ENV KYLIN_VERSION=2.6.2
 ENV KYLIN_CONF_DIR=/etc/kylin
