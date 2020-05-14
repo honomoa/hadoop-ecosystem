@@ -34,6 +34,7 @@ build-hadoop-%:
 		$(DOCKER) build -t honomoa/hadoop-nodemanager:$* -f ./hadoop-nodemanager/$*.Dockerfile ./hadoop-nodemanager
 		$(DOCKER) build -t honomoa/hadoop-timelineserver:$* -f ./hadoop-timelineserver/$*.Dockerfile ./hadoop-timelineserver
 		$(DOCKER) build -t honomoa/hadoop-proxyserver:$* -f ./hadoop-proxyserver/$*.Dockerfile ./hadoop-proxyserver
+		$(DOCKER) build -t honomoa/hadoop-historyserver:$* -f ./hadoop-historyserver/$*.Dockerfile ./hadoop-historyserver
 		$(DOCKER) build -t honomoa/hadoop-datanodemanager:$* -f ./hadoop-datanodemanager/$*.Dockerfile ./hadoop-datanodemanager
 
 build-spark-%:
@@ -102,6 +103,7 @@ clean-hadoop-%:
 		$(DOCKER) rmi honomoa/hadoop-nodemanager:$* || true
 		$(DOCKER) rmi honomoa/hadoop-timelineserver:$* || true
 		$(DOCKER) rmi honomoa/hadoop-proxyserver:$* || true
+		$(DOCKER) rmi honomoa/hadoop-historyserver:$* || true
 		$(DOCKER) rmi honomoa/hadoop-base:$* || true
 		$(DOCKER) rmi openjdk:8 || true
 
@@ -173,6 +175,7 @@ push-hadoop-%:
 		$(DOCKER) push honomoa/hadoop-nodemanager:$*
 		$(DOCKER) push honomoa/hadoop-timelineserver:$*
 		$(DOCKER) push honomoa/hadoop-proxyserver:$*
+		$(DOCKER) push honomoa/hadoop-historyserver:$*
 
 push-spark-%:
 		$(DOCKER) push honomoa/spark-historyserver:$*-hadoop$(SPARK_HADOOP)
@@ -241,6 +244,7 @@ pull-hadoop-%:
 		$(DOCKER) pull honomoa/hadoop-nodemanager:$*
 		$(DOCKER) pull honomoa/hadoop-timelineserver:$*
 		$(DOCKER) pull honomoa/hadoop-proxyserver:$*
+		$(DOCKER) pull honomoa/hadoop-historyserver:$*
 
 pull-spark-%:
 		$(DOCKER) pull honomoa/spark-historyserver:$*-hadoop$(SPARK_HADOOP)
