@@ -69,6 +69,14 @@ RUN conda install --quiet --yes 'spylon-kernel=0.4*' && \
     python -m spylon_kernel install --sys-prefix && \
     rm -rf ${HOME}/.local
 
+# Unofficial Jupyter Notebook Extensions
+RUN conda install -c conda-forge jupyter_contrib_nbextensions \
+        jupyter_nbextensions_configurator && \
+    conda clean --all -f -y && \
+    jupyter contrib nbextension install --sys-prefix && \
+    jupyter nbextension enable execute_time/ExecuteTime && \
+    jupyter nbextensions_configurator enable --user
+
 RUN mkdir -p ${JUPYTER_HOME}/work
 VOLUME [ ${JUPYTER_HOME}/work ]
 
