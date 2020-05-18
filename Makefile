@@ -128,10 +128,10 @@ clean-zookeeper-%:
 		$(DOCKER) rmi honomoa/zookeeper:$* || true
 
 clean-hbase-%:
-		$(DOCKER) rmi honomoa/hbase-master:$*-hadoop3.1.2 || true
-		$(DOCKER) rmi honomoa/hbase-regionserver:$*-hadoop3.1.2 || true
-		$(DOCKER) rmi honomoa/hbase-thrift:$*-hadoop3.1.2 || true
-		$(DOCKER) rmi honomoa/hbase-base:$*-hadoop3.1.2 || true
+		$(DOCKER) rmi honomoa/hbase-master:$*-hadoop$(HBASE_HADOOP) || true
+		$(DOCKER) rmi honomoa/hbase-regionserver:$*-hadoop$(HBASE_HADOOP) || true
+		$(DOCKER) rmi honomoa/hbase-thrift:$*-hadoop$(HBASE_HADOOP) || true
+		$(DOCKER) rmi honomoa/hbase-base:$*-hadoop$(HBASE_HADOOP) || true
 
 clean-kylin-%:
 		$(DOCKER) rmi honomoa/kylin:$* || true
