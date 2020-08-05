@@ -92,7 +92,7 @@ if [ "$MULTIHOMED_NETWORK" = "1" ]; then
 
     # ZEPPELIN
     addConfiguration $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin.server.addr 0.0.0.0
-    addConfiguration $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin.server.port 8080
+    addConfiguration $ZEPPELIN_CONF_DIR/zeppelin-site.xml zeppelin.server.port ${ZEPPELIN_SITE_CONF_zeppelin_server_port:-8080}
 fi
 
 if [ -n "$GANGLIA_HOST" ]; then
